@@ -16,13 +16,12 @@ def init(scaler_name='scaler.bin', model_name = 'model.json'):
 
     return model, scaler
 
-def convert(audio_list, format_received="3gp"):
-    print(audio_list)
-    print(type(audio_list[0]))
+def convert(audio_list):
     audio_names = []
+
     for idx, audio in enumerate(audio_list):
         audio_path = os.path.join(app.root_path, f"audio{idx+1}.wav")
-        audio_file = AudioSegment.from_file(audio, format=format_received)
+        audio_file = AudioSegment.from_file(audio)
         audio_file.export(audio_path, format='wav')
         audio_names.append(audio_path)
     return audio_names[0], audio_names[1], audio_names[2]
@@ -33,17 +32,15 @@ model, scaler = init()
 
 @app.route('/')
 def hello():
-  return render_template('index.html')
+  return render_template('hello.html')
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    # checa se o arquivo de audio foi enviado
+
     if 'audio1' not in request.files or 'audio2' not in request.files or 'audio3' not in request.files:
         return jsonify({'error': 'no audio files found'}), 400
-    print(request)
-    audio1, audio2, audio3 = convert([request.files['audio1'], request.files['audio2'], request.files['audio3']], format_received="wav")
-    print(audio1)
 
+    audio1, audio2, audio3 = convert([request.files['audio1'], request.files['audio2'], request.files['audio3']])
     prediction = extract_features.predict_all(audio1, audio2, audio3, model, scaler, delete=True)
 
     return jsonify({'result': prediction}), 200

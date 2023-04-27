@@ -11,8 +11,6 @@ warnings.filterwarnings("ignore")
 
 from scipy.io.wavfile import read
 
-print("Hello world!")
-
 def is_one_second_or_more(audio_file):
     
     with wave.open(audio_file, "r") as mywav:
@@ -59,7 +57,7 @@ def remove_silence(filename, filepath, audio_format="wav"):
     
 def remove_first_half_second(file_name, file_path, audio_format='wav'):
     file_name = remove_ext(file_name)
-    myaudio = AudioSegment.from_file(file_path , audio_format) 
+    myaudio = AudioSegment.from_file(file_path, audio_format) 
     chunk_length_ms = 500
     
     chunks = make_chunks(myaudio, chunk_length_ms)
@@ -92,10 +90,7 @@ def remove_first_half_second(file_name, file_path, audio_format='wav'):
     raise Exception("Audio too short")
         
           
-def preprocess_and_create_chunks(filename, filepath, audio_format="wav"):
+def preprocess_and_create_chunks(filename, filepath):
     remove_silence(filename, filepath)
     return remove_first_half_second(filename, filepath)
 
-def delete_files(files_list):
-    for file in files_list:
-        os.remove("demofile.txt")

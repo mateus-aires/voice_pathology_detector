@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from joblib import load
 from pydub import AudioSegment
 import os
@@ -30,6 +30,10 @@ def convert(audio_list, format_received="3gp"):
 app = Flask(__name__)
 
 model, scaler = init()
+
+@app.route('/')
+def hello():
+  return render_template('index.html')
 
 @app.route('/predict', methods=['POST'])
 def predict():

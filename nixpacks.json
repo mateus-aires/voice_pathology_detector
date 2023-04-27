@@ -1,0 +1,41 @@
+{
+  "providers": [],
+  "buildImage": "ghcr.io/railwayapp/nixpacks:ubuntu-1680566572",
+  "variables": {
+    "NIXPACKS_METADATA": "python",
+    "PYTHONUNBUFFERED": "1"
+  },
+  "phases": {
+    "install": {
+      "dependsOn": [
+        "setup"
+      ],
+      "cmds": [
+        "python -m venv /opt/venv && . /opt/venv/bin/activate && pip install -r requirements.txt"
+      ],
+      "cacheDirectories": [
+        "/root/.cache/pip"
+      ],
+      "paths": [
+        "/opt/venv/bin"
+      ]
+    },
+    "setup": {
+      "nixPkgs": [
+        "python38",
+        "gcc",
+        "ffmpeg"
+      ],
+      "nixLibs": [
+        "zlib",
+        "stdenv.cc.cc.lib"
+      ],
+      "nixOverlays": [],
+      "nixpkgsArchive": "293a28df6d7ff3dec1e61e37cc4ee6e6c0fb0847"
+    }
+  },
+  "start": {
+    "cmd": "gunicorn main:app"
+  }
+}
+

@@ -1,2 +1,10 @@
 flask>=2.0.0
 gunicorn>=20.1.0
+Flask==1.1.2
+joblib==1.2.0
+librosa==0.10.0.post2
+numpy==1.22.4
+parselmouth==1.1.1
+pydub==0.25.1
+scipy==1.7.1
+xgboost==1.7.5

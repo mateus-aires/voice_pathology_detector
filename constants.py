@@ -9,6 +9,6 @@ PREDICTION_1 = 'pred1'
 PREDICTION_2 = 'pred2'
 PREDICTION_3 = 'pred3'
 
-AUDIO_TOO_SHORT_ERROR_MESSAGE = "Gravação muito curta. Fale por mais de dois segundos."
+AUDIO_TOO_SHORT_ERROR_MESSAGE = "Gravação audível muito curta. Fale por mais de três segundos."
 INTERNAL_ERROR_MESSAGE =  "Erro interno, tente novamente."
 

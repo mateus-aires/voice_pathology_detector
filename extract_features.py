@@ -7,6 +7,7 @@ warnings.filterwarnings("ignore")
 
 import os
 import util
+import constants as c
 
 def extrair_features_mfcc(path_arquivo, segundos=1):
 
@@ -80,23 +81,17 @@ def extract_features_predict(audio_file, duration, taxa_nova_amostragem=44100, a
     try:
         
         chunk_name = util.get_first_segment(audio_file, audio_ext, duration * 1000)
-
         features_mfcc = extrair_features_mfcc(audio_file, segundos=duration)
-
         acoustic_features = extract_acoustic_features(audio_file, segundos=duration)
-
         spectral_contrast = extract_spectral_contrast(chunk_name, 4)[0]
-
         zero_crossing = extract_zero_crossing(chunk_name)[0]
-
         rms = extract_rms(chunk_name)[0]
-
 
         features = np.concatenate((features_mfcc, acoustic_features, spectral_contrast, zero_crossing, rms))
 
         return features
     except IOError:
-        return
+        raise Exception(c.INTERNAL_ERROR_MESSAGE)
 
 def extract_and_scale(audio_file, duration, scaler, taxa_nova_amostragem):
     arr_attr = extract_features_predict(audio_file, duration, taxa_nova_amostragem=taxa_nova_amostragem)
@@ -114,7 +109,7 @@ def test_predict(audio_file, model, scaler, proba=False):
 def extract_mean_poba(file_name, model, scaler, test=False):
     
     if not util.is_one_second_or_more(file_name):
-        raise Exception("Audio too short")
+        raise Exception(c.AUDIO_TOO_SHORT_ERROR_MESSAGE)
     
     iterate_file = [file_name]
     
@@ -136,23 +131,53 @@ def predict_all(audio1, audio2, audio3, model, scaler, threshold = 0.5, is_test=
     chunks_names = []
     
     sum_predictions = 0
+    sum_predictions_prob = 0
 
     predictions = []
+
+    try:
+        for audio in audio_list:
+            files, x = extract_mean_poba(audio, model, scaler, test=is_test)
+            chunks_names += files
+            print(x)
+            sum_predictions_prob += x
+            predictions.append(x)
+            if x > threshold:
+                sum_predictions += 1
+
+        mean = sum_predictions_prob / 3
+
+        if delete:
+            delete_files(chunks_names + audio_list)
+        
+        result, mean, pred1, pred2, pred3 = process_preds(sum_predictions, threshold, predictions, mean)
+
+        return True, "", result, mean, pred1, pred2, pred3
     
-    for audio in audio_list:
-        files, x = extract_mean_poba(audio, model, scaler, test=is_test)
-        chunks_names += files
-        print(x)
-        predictions.append(x)
-        if x > threshold:
-            sum_predictions += 1
+    except Exception as e:
+        return False, str(e), "false", 0, 0, 0, 0
+    
 
-    if delete:
-        delete_files(chunks_names + audio_list)
 
-    return (sum_predictions > 1.5), predictions[0], predictions[1], predictions[2]
-
+def process_preds(sum_predictions, thr, predictions, mean):
+    result = bool(mean > thr)
+    if sum_predictions == 3:
+        return True, mean, predictions[0], predictions[1], predictions[2]
+    elif sum_predictions == 2:
+        if result:
+            return True, mean, predictions[0], predictions[1], predictions[2]
+        else:
+            sum = 0
+            for i in range(predictions):
+                if predictions[i] > thr:
+                   sum += predictions[i]
+            new_mean = sum / 2 
+            return True, new_mean, predictions[0], predictions[1], predictions[2]
+    else:
+        return result, mean, predictions[0], predictions[1], predictions[2]
 
 def delete_files(files_list):
+    files_list.append("chunk0.wav")
     for file in files_list:
-        os.remove(file)
+        if os.path.exists(file):
+            os.remove(file)

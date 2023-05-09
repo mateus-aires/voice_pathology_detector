@@ -1,10 +1,11 @@
 import wave
-
-
 from pydub.utils import make_chunks
 from pydub.silence import split_on_silence
 from pydub import AudioSegment
 import os
+import constants as c
+from joblib import load
+from xgboost import XGBClassifier
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -68,7 +69,7 @@ def remove_first_half_second(file_name, file_path, audio_format='wav'):
     
     if(len(chunks) > 1):
         
-        for i in range(1, chunks_qtd):
+        for i in range(1, min(chunks_qtd, 6)):
             j = i + 1
             
             if j == chunks_qtd - 1:
@@ -87,10 +88,28 @@ def remove_first_half_second(file_name, file_path, audio_format='wav'):
             one_second_combined.export(chunk_name, format="wav")
             exported_names.append(chunk_name)
         return exported_names
-    raise Exception("Audio too short")
+    raise Exception(c.AUDIO_TOO_SHORT_ERROR_MESSAGE)
         
           
 def preprocess_and_create_chunks(filename, filepath):
     remove_silence(filename, filepath)
     return remove_first_half_second(filename, filepath)
+
+def convert(app, audio_list):
+    audio_names = []
+
+    for idx, audio in enumerate(audio_list):
+        audio_path = os.path.join(app.root_path, f"audio{idx+1}.wav")
+        audio_file = AudioSegment.from_file(audio)
+        audio_file.export(audio_path, format='wav')
+        audio_names.append(audio_path)
+    return audio_names[0], audio_names[1], audio_names[2]
+
+
+def init(scaler_name='scaler.bin', model_name = 'model.json'):
+    scaler=load(scaler_name)
+    model = XGBClassifier()
+    model.load_model(model_name)
+
+    return model, scaler
 

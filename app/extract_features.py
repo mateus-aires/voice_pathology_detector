@@ -130,24 +130,27 @@ def extract_mean_poba(file_name, model, scaler, test=False):
     return iterate_file, mean
 
 
-def predict_all(audio1, audio2, audio3, model, scaler, thr = 0.75, test=False, delete=False):
+def predict_all(audio1, audio2, audio3, model, scaler, threshold = 0.5, is_test=False, delete=False):
     
     audio_list = [audio1, audio2, audio3]
     chunks_names = []
     
     sum_predictions = 0
+
+    predictions = []
     
     for audio in audio_list:
-        files, x = extract_mean_poba(audio, model, scaler, test=test)
+        files, x = extract_mean_poba(audio, model, scaler, test=is_test)
         chunks_names += files
         print(x)
-        if x > thr:
+        predictions.append(x)
+        if x > threshold:
             sum_predictions += 1
 
     if delete:
         delete_files(chunks_names + audio_list)
 
-    return (sum_predictions > 1.5)
+    return (sum_predictions > 1.5), predictions[0], predictions[1], predictions[2]
 
 
 def delete_files(files_list):

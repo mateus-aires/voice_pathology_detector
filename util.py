@@ -62,20 +62,19 @@ def remove_first_half_second(file_name, file_path, audio_format='wav'):
     chunk_length_ms = 500
     
     chunks = make_chunks(myaudio, chunk_length_ms)
-    
     chunks_qtd = len(chunks)
+    last_index = chunks_qtd - 1
     
     exported_names = []
     
     if(len(chunks) > 1):
         
-        for i in range(1, min(chunks_qtd, 6)):
+        for i in range(1, min(chunks_qtd, 8), 2):
             j = i + 1
             
-            if j == chunks_qtd - 1:
+            if i == last_index or j == last_index:
                 break
-            
-            
+                  
             one_second_combined = AudioSegment.empty()
             
             chunk1 = chunks[i]

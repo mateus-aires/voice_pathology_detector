@@ -106,7 +106,7 @@ def test_predict(audio_file, model, scaler, proba=False):
     return model.predict(scaled)
 
 
-def extract_mean_poba(file_name, model, scaler, test=False):
+def extract_mean_poba(file_name, model, scaler, test=False, up_thr=0.95):
     
     if not util.is_one_second_or_more(file_name):
         raise Exception(c.AUDIO_TOO_SHORT_ERROR_MESSAGE)
@@ -118,11 +118,24 @@ def extract_mean_poba(file_name, model, scaler, test=False):
     
     sum_total = 0
     
-    for name in iterate_file:
-        sum_total += test_predict(name, model, scaler, proba=True)[0][1]
+
+    above_thr = False
     
-    mean = (sum_total / len(iterate_file))
-    return iterate_file, mean
+    for name in iterate_file:
+        proba = test_predict(name, model, scaler, proba=True)[0][1]
+
+        if proba > up_thr:
+            above_thr = True
+            break
+
+        sum_total += proba
+
+    if above_thr:
+        mean = proba
+    else:
+        mean = (sum_total / len(iterate_file))
+    
+    return iterate_file, np.float64(mean)
 
 
 def predict_all(audio1, audio2, audio3, model, scaler, threshold = 0.5, is_test=False, delete=False):

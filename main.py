@@ -25,7 +25,6 @@ def predict():
     success, error_message, result, mean, pred1, pred2, pred3 = extract_features.predict_all(audio1, audio2, audio3,
                                                                                               model, scaler, threshold=float(threshold), 
                                                                                               is_test=is_test, delete=(not is_test))
-
     return jsonify({'is_successful': success,
                     'error_message': error_message,
                     'result': result, 

@@ -1,4 +1,4 @@
-DEFAULT_THR = 0.5
+DEFAULT_THR = 0.65
 
 THRESHOLD = 'threshold'
 IS_TEST = 'is_test'

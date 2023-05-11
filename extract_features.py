@@ -116,19 +116,20 @@ def extract_mean_poba(file_name, model, scaler, test=False, up_thr=0.95):
     if not test:
         iterate_file = util.preprocess_and_create_chunks(file_name, file_name)
     
+    i = 1
     sum_total = 0
-    
-
     above_thr = False
     
     for name in iterate_file:
         proba = test_predict(name, model, scaler, proba=True)[0][1]
+        print(f"{i}: {str(proba)}")
 
         if proba > up_thr:
             above_thr = True
             break
 
         sum_total += proba
+        i += 1
 
     if above_thr:
         mean = proba
@@ -152,7 +153,7 @@ def predict_all(audio1, audio2, audio3, model, scaler, threshold = 0.5, is_test=
         for audio in audio_list:
             files, x = extract_mean_poba(audio, model, scaler, test=is_test)
             chunks_names += files
-            print(x)
+            print(f"Partial probability: {str(x)}")
             sum_predictions_prob += x
             predictions.append(x)
             if x > threshold:
@@ -164,7 +165,7 @@ def predict_all(audio1, audio2, audio3, model, scaler, threshold = 0.5, is_test=
             delete_files(chunks_names + audio_list)
         
         result, mean, pred1, pred2, pred3 = process_preds(sum_predictions, threshold, predictions, mean)
-
+        print(f"Overall probability: {mean}")
         return True, "", result, mean, pred1, pred2, pred3
     
     except Exception as e:
@@ -181,7 +182,7 @@ def process_preds(sum_predictions, thr, predictions, mean):
             return True, mean, predictions[0], predictions[1], predictions[2]
         else:
             sum = 0
-            for i in range(predictions):
+            for i in range(len(predictions)):
                 if predictions[i] > thr:
                    sum += predictions[i]
             new_mean = sum / 2 

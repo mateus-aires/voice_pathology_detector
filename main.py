@@ -1,9 +1,9 @@
 from flask import Flask, jsonify, request, render_template
 
-import os
 import constants as c
 import extract_features
 import util
+from datetime import datetime
 
 app = Flask(__name__)
 model, scaler = util.init()
@@ -20,6 +20,9 @@ def predict():
 
     threshold = request.form.get(c.THRESHOLD) or c.DEFAULT_THR
     is_test = request.form.get(c.IS_TEST) == 'true'
+
+    now = datetime.now()
+    print(f"{now.day}/{now.month}/{now.year}", now.strftime("%H:%M:%S"))
 
     audio1, audio2, audio3 = util.convert(app, [request.files[c.AUDIO_1], request.files[c.AUDIO_2], request.files[c.AUDIO_3]])
     success, error_message, result, mean, pred1, pred2, pred3 = extract_features.predict_all(audio1, audio2, audio3,

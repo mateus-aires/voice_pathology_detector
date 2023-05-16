@@ -12,6 +12,10 @@ model, scaler = util.init()
 def hello():
   return render_template('hello.html')
 
+@app.route('/privacy_policy')
+def privacy():
+  return render_template('privacy_policy.html')
+
 @app.route('/predict', methods=['POST'])
 def predict():
 

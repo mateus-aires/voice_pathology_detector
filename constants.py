@@ -8,6 +8,7 @@ AUDIO_3 = 'audio3'
 PREDICTION_1 = 'pred1'
 PREDICTION_2 = 'pred2'
 PREDICTION_3 = 'pred3'
+DEFAULT_TIMEDELTA = 3
 
 AUDIO_TOO_SHORT_ERROR_MESSAGE = "Gravação audível muito curta. Fale por mais de três segundos."
 INTERNAL_ERROR_MESSAGE =  "Erro interno, tente novamente."

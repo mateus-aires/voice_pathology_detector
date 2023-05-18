@@ -6,6 +6,7 @@ import os
 import constants as c
 from joblib import load
 from xgboost import XGBClassifier
+from datetime import datetime, timedelta
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -111,4 +112,9 @@ def init(scaler_name='scaler.bin', model_name = 'model.json'):
     model.load_model(model_name)
 
     return model, scaler
+
+def now():
+    now = datetime.utcnow()
+    now_here = now - timedelta(hours=c.DEFAULT_TIMEDELTA)
+    print(f"{now_here.day}/{now_here.month}/{now_here.year}", now_here.strftime("%H:%M:%S"))
 

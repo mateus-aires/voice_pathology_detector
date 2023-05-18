@@ -165,7 +165,7 @@ def predict_all(audio1, audio2, audio3, model, scaler, threshold = 0.5, is_test=
             delete_files(chunks_names + audio_list)
         
         result, mean, pred1, pred2, pred3 = process_preds(sum_predictions, threshold, predictions, mean)
-        print(f"Overall probability: {mean}")
+        print(f"*Overall probability: {mean}")
         return True, "", result, mean, pred1, pred2, pred3
     
     except Exception as e:

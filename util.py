@@ -84,7 +84,7 @@ def remove_first_half_second(file_name, file_path, audio_format='wav'):
             one_second_combined = chunk1 + chunk2
             
             chunk_name = "{filename}-{index1}{index2}:{size}.wav".format(filename=file_name, index1=j, index2=j+1, size=chunks_qtd)
-            print ("exporting", chunk_name)
+            print ("...exporting", chunk_name)
             one_second_combined.export(chunk_name, format="wav")
             exported_names.append(chunk_name)
         return exported_names
@@ -117,5 +117,5 @@ def now():
     now = datetime.utcnow()
     now_here = now - timedelta(hours=c.DEFAULT_TIMEDELTA)
     time = now_here.strftime("%H:%M:%S")
-    return f"{now_here.day}/{now_here.month}/{now_here.year}; {time}" 
+    return f"[{now_here.day}/{now_here.month}/{now_here.year}; {time}]" 
 

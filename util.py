@@ -116,5 +116,6 @@ def init(scaler_name='scaler.bin', model_name = 'model.json'):
 def now():
     now = datetime.utcnow()
     now_here = now - timedelta(hours=c.DEFAULT_TIMEDELTA)
-    print(f"{now_here.day}/{now_here.month}/{now_here.year}", now_here.strftime("%H:%M:%S"))
+    time = now_here.strftime("%H:%M:%S")
+    return f"{now_here.day}/{now_here.month}/{now_here.year}; {time}" 
 

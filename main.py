@@ -3,15 +3,9 @@ from flask import Flask, jsonify, request, render_template
 import constants as c
 import extract_features
 import util
-from datetime import datetime, timedelta
 
 app = Flask(__name__)
 model, scaler = util.init()
-
-agora = datetime.utcnow()
-nova_hora = agora - timedelta(hours=c.DEFAULT_TIMEDELTA)
-print(nova_hora)
-
 
 @app.route('/')
 def hello():

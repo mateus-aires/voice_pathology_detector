@@ -169,7 +169,11 @@ def predict_all(audio1, audio2, audio3, model, scaler, threshold = 0.5, is_test=
         return True, "", result, mean, pred1, pred2, pred3
     
     except Exception as e:
-        return False, str(e), "false", 0, 0, 0, 0
+        print(f"***Error: {str(e)}")
+        if delete:
+            delete_files(chunks_names + audio_list)
+
+        return False, str(e), "", 0, 0, 0, 0
     
 
 
@@ -191,7 +195,8 @@ def process_preds(sum_predictions, thr, predictions, mean):
         return result, mean, predictions[0], predictions[1], predictions[2]
 
 def delete_files(files_list):
-    files_list.append("chunk0.wav")
-    for file in files_list:
+    files_set = set(files_list + ["chunk0.wav", "audio1.wav", "audio2.wav", "audio3.wav"])
+
+    for file in files_set:
         if os.path.exists(file):
             os.remove(file)

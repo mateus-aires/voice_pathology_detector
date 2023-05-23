@@ -58,6 +58,7 @@ def remove_silence(filename, filepath, audio_format="wav"):
     
     
 def remove_first_half_second(file_name, file_path, audio_format='wav'):
+
     file_name = remove_ext(file_name)
     myaudio = AudioSegment.from_file(file_path, audio_format) 
     chunk_length_ms = 500
@@ -87,7 +88,10 @@ def remove_first_half_second(file_name, file_path, audio_format='wav'):
             print ("...exporting", chunk_name)
             one_second_combined.export(chunk_name, format="wav")
             exported_names.append(chunk_name)
-        return exported_names
+            
+        if len(exported_names) > 0:   
+            return exported_names
+        
     raise Exception(c.AUDIO_TOO_SHORT_ERROR_MESSAGE)
         
           

@@ -17,19 +17,26 @@ def privacy():
 
 @app.route('/predict', methods=['POST'])
 def predict():
+    
+    try: 
+       if c.AUDIO_1 not in request.files or c.AUDIO_2 not in request.files or c.AUDIO_3 not in request.files:
+          raise Exception(c.AUDIO_FILES_MISSING)
 
-    if c.AUDIO_1 not in request.files or c.AUDIO_2 not in request.files or c.AUDIO_3 not in request.files:
-        return jsonify({'error_message': 'no audio files found'}), 400
+       threshold = request.form.get(c.THRESHOLD) or c.DEFAULT_THR
+       is_test = request.form.get(c.IS_TEST) == 'true'
 
-    threshold = request.form.get(c.THRESHOLD) or c.DEFAULT_THR
-    is_test = request.form.get(c.IS_TEST) == 'true'
+       print(util.now())
 
-    print(util.now())
-
-    audio1, audio2, audio3 = util.convert(app, [request.files[c.AUDIO_1], request.files[c.AUDIO_2], request.files[c.AUDIO_3]])
-    success, error_message, result, mean, pred1, pred2, pred3 = extract_features.predict_all(audio1, audio2, audio3,
+       audio1, audio2, audio3 = util.convert(app, [request.files[c.AUDIO_1], request.files[c.AUDIO_2], request.files[c.AUDIO_3]])
+       success, error_message, result, mean, pred1, pred2, pred3 = extract_features.predict_all(audio1, audio2, audio3,
                                                                                               model, scaler, threshold=float(threshold), 
                                                                                               is_test=is_test, delete=(not is_test))
+       
+    except Exception as e:
+        error_message = str(e)[:50]
+        print(f"***Error: {error_message}")
+        success, error_message, result, mean, pred1, pred2, pred3 = False, error_message, "", 0, 0, 0, 0
+
     return jsonify({'is_successful': success,
                     'error_message': error_message,
                     'result': result, 

@@ -12,4 +12,5 @@ DEFAULT_TIMEDELTA = 3
 
 AUDIO_TOO_SHORT_ERROR_MESSAGE = "Gravação audível muito curta. Fale por mais de três segundos."
 INTERNAL_ERROR_MESSAGE =  "Erro interno, tente novamente."
+AUDIO_FILES_MISSING =  "Arquivos de áudio não encontrados na requisição."
 
